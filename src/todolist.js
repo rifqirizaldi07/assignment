@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import axios from 'axios';
 import {
   Icon,
   CheckBox,
@@ -21,14 +22,14 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
-export default class todolist extends Component {
+class todolist extends Component {
   constructor() {
     super();
     this.state = {
       inputList: '',
       updateId: 0,
       btnValue: true,
-      data: [{id: 1, title: 'work', checked: false}],
+      data: [],
     };
   }
 
@@ -46,35 +47,44 @@ export default class todolist extends Component {
       </View>
     );
   };
-  handleBtn = () => {
-    if (!this.state.inputList) {
-      return;
-    }
-    const data = this.state.data;
-    if (this.state.btnValue === true) {
-      const dataId = data.length + 1;
-      const inputList = {
-        id: dataId,
-        title: this.state.inputList,
-      };
-      data.push(inputList);
-      this.setState({data, inputList: ''});
-      this.empty.clear();
-    } else {
-      data.map(item => {
-        if (this.state.updateId === item.id) {
-          item.title = this.state.inputList;
-        }
-        return item;
-      });
-      this.setState({
-        data,
-        btnValue: true,
-      });
-    }
-    this.empty.clear();
-  };
+  // handleBtn = () => {
+  //   if (!this.state.inputList) {
+  //     return;
+  //   }
+  //   const data = this.state.data;
+  //   if (this.state.btnValue === true) {
+  //     const dataId = data.length + 1;
+  //     const inputList = {
+  //       id: dataId,
+  //       title: this.state.inputList,
+  //     };
+  //     data.push(inputList);
+  //     this.setState({data, inputList: ''});
+  //     this.empty.clear();
+  //   } else {
+  //     data.map(item => {
+  //       if (this.state.updateId === item.id) {
+  //         item.title = this.state.inputList;
+  //       }
+  //       return item;
+  //     });
+  //     this.setState({
+  //       data,
+  //       btnValue: true,
+  //     });
+  //   }
+  //   this.empty.clear();
+  // };
 
+  async componentDidMount() {
+    this.showTodo();
+    this.focusListener = this.props.navigation.addListener('didFocus', () => {
+      this.showTodo();
+    });
+  }
+  showTodo = () => {
+    this.props.getTodo();
+  };
   handdleRemove = id => {
     const data = this.state.data;
     const newData = data.filter(dataref => dataref.id !== id);
@@ -120,7 +130,7 @@ export default class todolist extends Component {
           </View>
 
           <FlatList
-            data={this.state.data}
+            data={this.props.todo.todo}
             renderItem={({item}) => (
               <this.Item
                 title={item.title}
@@ -156,6 +166,22 @@ export default class todolist extends Component {
     );
   }
 }
+
+const mapStateToProps = state => {
+  return {
+    todo: state.todo,
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    getTodo: id => dispatch(act.getRoom(id)),
+  };
+};
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(todolist);
 
 const styles = StyleSheet.create({
   container: {
