@@ -14,6 +14,7 @@ import {
   View,
   Text,
   FlatList,
+  StatusBar,
   StyleSheet,
   TextInput,
   TouchableHighlight,
@@ -95,6 +96,7 @@ export default class todolist extends Component {
   render() {
     return (
       <Container>
+        <StatusBar style={{backgroundColor: '#111212'}} />
         <Header style={{backgroundColor: '#111212'}}>
           <Body style={{alignItems: 'center'}}>
             <Title style={{color: 'white', letterSpacing: 5.0}}>Todolist</Title>
